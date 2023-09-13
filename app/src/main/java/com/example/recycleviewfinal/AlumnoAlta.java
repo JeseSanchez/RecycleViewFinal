@@ -40,14 +40,20 @@ import Modelo.AlumnosDb;
 
 public class AlumnoAlta extends AppCompatActivity {
 
-    private Button btnGuardar, btnRegresar, btnEliminar, btnImagen;
+    private Button btnGuardar,
+                   btnRegresar,
+                   btnEliminar,
+                   btnImagen;
     private ItemAlumno alumno;
-    private EditText txtNombre, txtMatricula, txtGrado;
+    private EditText txtNombre,
+                     txtMatricula,
+                     txtGrado;
     private ImageView imgAlumno;
     private TextView lblUriImagen;
     private int posicion;
 
-    private static final int REQUEST_PERMISSION = 2, REQUEST_CODE = 1;
+    static final int REQUEST_PERMISSION = 2,
+                     REQUEST_CODE = 1;
     private Bitmap bitmap;
 
     @Override
@@ -55,15 +61,18 @@ public class AlumnoAlta extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumno_alta);
 
-        btnGuardar = (Button) findViewById(R.id.btnGuardar);
-        btnRegresar = (Button) findViewById(R.id.btnRegresar);
-        btnEliminar = (Button) findViewById(R.id.btnEliminar);
-        btnImagen = (Button) findViewById(R.id.btnImagen);
-        txtMatricula = (EditText) findViewById(R.id.txtMatricula);
-        txtNombre = (EditText) findViewById(R.id.txtNombre);
-        txtGrado = (EditText) findViewById(R.id.txtGrado);
-        imgAlumno = (ImageView) findViewById(R.id.imgAlumno);
-        lblUriImagen = (TextView) findViewById(R.id.lblUriImagen);
+        btnGuardar = findViewById(R.id.btnGuardar);
+        btnRegresar = findViewById(R.id.btnRegresar);
+        btnEliminar = findViewById(R.id.btnEliminar);
+        btnImagen = findViewById(R.id.btnImagen);
+
+        txtMatricula = findViewById(R.id.txtMatricula);
+        txtNombre = findViewById(R.id.txtNombre);
+        txtGrado = findViewById(R.id.txtGrado);
+
+        imgAlumno = findViewById(R.id.imgAlumno);
+
+        lblUriImagen = findViewById(R.id.lblUriImagen);
 
         Bundle bundle = getIntent().getExtras();
         alumno = (ItemAlumno) bundle.getSerializable("alumno");
@@ -82,19 +91,20 @@ public class AlumnoAlta extends AppCompatActivity {
 
         btnEliminar.setOnClickListener(v -> {
             if(posicion >= 0){
-                new AlertDialog.Builder(AlumnoAlta.this).setTitle("Alumno")
-                                                               .setMessage(" ¿Desea eliminar al alumno ?")
-                                                               .setPositiveButton("Confirmar", (dialog, which) -> {
-                                                                    Aplicacion.alumnosDb.deleteAlumno(alumno.getId());
-                                                                    Aplicacion.alumnos.remove(posicion);
-                                                                    Aplicacion.adaptador.notifyItemRemoved(posicion);
-                                                                    Toast.makeText(getApplicationContext(), "Se elimino con exito ",Toast.LENGTH_SHORT).show();
-                                                                    setResult(Activity.RESULT_OK);
-                                                                    finish();
-                                                                    Aplicacion.adaptador.notifyDataSetChanged();
-                                                               })
-                                                               .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-                                                               .show();
+                new AlertDialog
+                        .Builder(AlumnoAlta.this).setTitle("Alumno")
+                        .setMessage(" ¿Desea eliminar al alumno ?")
+                        .setPositiveButton("Confirmar", (dialog, which) -> {
+                            Aplicacion.alumnosDb.deleteAlumno(alumno.getId());
+                            Aplicacion.alumnos.remove(posicion);
+                            Aplicacion.adaptador.notifyItemRemoved(posicion);
+                            Toast.makeText(getApplicationContext(), "Se elimino con exito ",Toast.LENGTH_SHORT).show();
+                            setResult(Activity.RESULT_OK);
+                            finish();
+                            Aplicacion.adaptador.notifyDataSetChanged();
+                            })
+                        .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         });
 

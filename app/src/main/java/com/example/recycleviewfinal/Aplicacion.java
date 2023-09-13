@@ -9,7 +9,7 @@ import Modelo.AlumnosDb;
 public class Aplicacion extends Application {
 
     static ArrayList<ItemAlumno> alumnos;
-    public static AdapterAlumno adaptador;
+    static AdapterAlumno adaptador;
 
     public ArrayList<ItemAlumno> getAlumnos(){ return alumnos; }
 

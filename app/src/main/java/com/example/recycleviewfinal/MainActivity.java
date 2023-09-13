@@ -15,17 +15,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager manager;
-    private FloatingActionButton fbtnAgregar, fbtnRegresar;
+    private FloatingActionButton fbtnAgregar,
+                                 fbtnRegresar;
 
     private ItemAlumno alumno;
     private int posicion = -1;
+
+    private Aplicacion app;
 
 
     @Override
@@ -33,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Aplicacion app = (Aplicacion) getApplication();
+        app = (Aplicacion) getApplication();
         recyclerView = findViewById(R.id.recId);
         recyclerView.setAdapter(app.getAdaptador());
         fbtnAgregar = findViewById(R.id.agregarAlumno);
@@ -67,11 +73,13 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 0);
         });
 
-        fbtnRegresar.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("Lista Alumnos")
-                                                            .setMessage(" ¿Desea salir? ")
-                                                            .setPositiveButton("Confirmar", (dialog, which) -> finish())
-                                                            .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-                                                            .show()
+        fbtnRegresar.setOnClickListener(v -> {
+                    new AlertDialog.Builder(this).setTitle("Lista Alumnos")
+                            .setMessage(" ¿Desea salir? ")
+                            .setPositiveButton("Confirmar", (dialog, which) -> finishAndRemoveTask())
+                            .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                            .show();
+                }
         );
 
     }
@@ -97,15 +105,21 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                aplicacion.getAdaptador().buscar(query);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                aplicacion.getAdaptador().getFilter().filter(s);
-                return true;
+                return false;
             }
         });
+
+        searchView.setOnCloseListener(() -> {
+            aplicacion.getAdaptador().desBuscar();
+            return false;
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 }

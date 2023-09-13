@@ -17,14 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 public class AdapterAlumno extends RecyclerView.Adapter<AdapterAlumno.ViewHolder> implements View.OnClickListener{
-    private ArrayList<ItemAlumno> listaAlumno;
+    private ArrayList<ItemAlumno> listaAlumno,
+    listaOriginal;
 
     private View.OnClickListener listener;
     private Context context;
     private LayoutInflater inflater;
 
     public AdapterAlumno(ArrayList<ItemAlumno> listaAlumno, Context context){
-        this.listaAlumno = listaAlumno ;
+        this.listaOriginal = new ArrayList<>(Aplicacion.alumnosDb.allAlumnos());
+        this.listaAlumno = listaAlumno;
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -67,53 +69,35 @@ public class AdapterAlumno extends RecyclerView.Adapter<AdapterAlumno.ViewHolder
     public void setOnClickListener(View.OnClickListener listener){this.listener = listener;}
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView txtNombre, txtMatricula, txtCarrera;
+        private TextView txtNombre,
+                         txtMatricula,
+                         txtCarrera;
         private ImageView idImagen;
 
         public ViewHolder(@NonNull View itemView){
             super(itemView);
-            txtNombre = (TextView) itemView.findViewById(R.id.lblNombre);
-            txtMatricula = (TextView) itemView.findViewById(R.id.lblMatricula);
-            txtCarrera = (TextView) itemView.findViewById(R.id.lblCarrera);
+            txtNombre = itemView.findViewById(R.id.lblNombre);
+            txtMatricula = itemView.findViewById(R.id.lblMatricula);
+            txtCarrera = itemView.findViewById(R.id.lblCarrera);
 
-            idImagen = (ImageView) itemView.findViewById(R.id.imgAlumno);
+            idImagen = itemView.findViewById(R.id.imgAlumno);
         }
     }
 
-    public Filter getFilter(){
-        return new Filter(){
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults filterResults = new FilterResults();
-                ArrayList<ItemAlumno> listaFiltrada = new ArrayList<>();
+    public void buscar(String cadena){
+        ArrayList<ItemAlumno> listaFiltrada = new ArrayList<>();
+        for (ItemAlumno itemAlumno : listaAlumno) {
 
-                if(constraint == null || constraint.length() == 0){
-                    listaFiltrada.addAll(listaAlumno);
-
-                }else {
-                    String searchStr = constraint.toString().toLowerCase().trim();
-
-                    for (ItemAlumno itemAlumno : listaAlumno) {
-
-                        if (itemAlumno.getTextNombre().toLowerCase().contains(searchStr)) {
-                            listaFiltrada.add(itemAlumno);
-                        }
-                    }
-                    filterResults.values = listaFiltrada;
-                    filterResults.count = listaFiltrada.size();
-                }
-                return filterResults;
+            if (itemAlumno.getTextNombre().toLowerCase().contains(cadena.toLowerCase())) {
+                listaFiltrada.add(itemAlumno);
             }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                listaAlumno.clear();
-                if (results.count > 0){
-                    listaAlumno.addAll((ArrayList<ItemAlumno>) results.values);
-                }
-                notifyDataSetChanged();
-            }
-        };
+        }
+        listaAlumno = listaFiltrada;
+        notifyDataSetChanged();
+    }
+    public void desBuscar(){
+        listaAlumno = listaOriginal;
+        notifyDataSetChanged();
     }
 }
 
